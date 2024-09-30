@@ -68,6 +68,8 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
+LOGIN_REDIRECT_URL = '/'
+
 ROOT_URLCONF = "webblog_project.urls"
 
 TEMPLATES = [
