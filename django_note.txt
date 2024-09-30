@@ -1,0 +1,35 @@
+tạo project mới
+django-admin startproject mysite
+
+Chạy thử sever 
+cd mysite
+python manage.py runserver
+
+Tao ứng dung mới
+python manage.py startapp myapp
+
+
+Tạo migrations cho các thay đổi trong mô hình dữ liệu
+python manage.py makemigrations
+
+
+1. Áp dụng migrations để cập nhật cơ sở dữ liệu
+python manage.py migrate
+
+
+2. Tạo tài khoản quản trị viên
+python manage.py createsuperuser
+
+Kiểm tra dự án với các bài kiểm tra tự động
+python manage.py test
+
+
+Sau khi định nghĩa xong các model, bạn cần chạy lệnh makemigrations để tạo các migration và migrate để áp dụng các thay đổi vào cơ sở dữ liệu
+python manage.py makemigrations myapp
+python manage.py migrate
+
+
+
+
+Để thay đổi địa chỉ ip và cổng mà server sẽ chạy, có thể dùng lệnh:
+python manage.py runserver 80

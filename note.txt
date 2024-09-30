@@ -1,0 +1,16 @@
+conda create --name myEnv django
+conda activate myEnv
+pip install dijango
+pip install dijango-bootstrap5
+pip install faker
+pip install django django-allauth
+
+django-admin startproject mysite
+python manage.py startapp <app_name>
+
+pip install django-allauth
+
+Account: SuperUser
+BeDauCoder
+88888888
+
