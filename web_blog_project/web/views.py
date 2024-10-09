@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import Item,Comment
-from .forms import ItemForm, CommentForm
+from .forms import ItemForm, CommentForm,ItemStatusForm
 from django.contrib.auth.decorators import login_required
 
 def register(request):
@@ -37,7 +37,7 @@ def user_logout(request):
 
 
 def item_list(request):
-    items = Item.objects.all()
+    items = Item.objects.filter(status='published')
     return render(request, 'item_list.html', {'items': items})
 
 
@@ -48,6 +48,7 @@ def add_item(request):
             item = form.save(commit=False)
             item.created_by = request.user
             item.save()
+            messages.success(request, 'Item added successfully!')
             return redirect('item_list')
     else:
         form = ItemForm()
@@ -98,3 +99,24 @@ def item_detail(request, pk):
     item = get_object_or_404(Item, pk=pk)
     comments = Comment.objects.filter(item=item)
     return render(request, 'item_detail.html', {'item': item, 'comments': comments})
+
+
+def about(request):
+    return render(request, 'about.html')
+def contact(request):
+    return render(request, 'contact.html')
+
+def draft_item_list(request):
+    drafts = Item.objects.filter(status='draft')
+    if request.method == 'POST':
+        form = ItemStatusForm(request.POST)
+        if form.is_valid():
+            item_id = request.POST.get('item_id')
+            item = get_object_or_404(Item, id=item_id)
+            item.status = form.cleaned_data['status']
+            item.save()
+            messages.success(request, 'Item status updated successfully!')
+            return redirect('draft_item_list')
+    else:
+        form = ItemStatusForm()
+    return render(request, 'draft_item_list.html', {'drafts': drafts, 'form':form})
