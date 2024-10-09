@@ -11,11 +11,11 @@ def register(request):
         username = request.POST['username']
         password = request.POST['password']
         if User.objects.filter(username=username).exists():
-            messages.error(request, 'Username already exists')
+            messages.error(request, 'Tài Khoản đã tồn tại')
         else:
             user = User.objects.create_user(username=username, password=password)
             user.save()
-            messages.success(request, 'Account created successfully')
+            messages.success(request, 'Tạo Tài Khoản Thành Công')
             return redirect('login')
     return render(request, 'register.html')
 
@@ -26,18 +26,15 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home')
+            return redirect('item_list')
         else:
-            messages.error(request, 'Invalid credentials')
+            messages.error(request, 'Thông tin đăng nhập không hợp lệ')
     return render(request, 'login.html')
 
 def user_logout(request):
     logout(request)
     return redirect('login')
 
-def home(request):
-    items = Item.objects.all()
-    return render(request, 'home.html', {'items': items})
 
 def item_list(request):
     items = Item.objects.all()
