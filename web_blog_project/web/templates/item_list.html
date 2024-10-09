@@ -14,7 +14,7 @@
                 <img src="{{ item.image.url }}" alt="{{ item.name }}" style="width:100px;height:100px;">
                 <p>Likes: {{ item.total_likes }}</p>
                 <a href="{% url 'like_item' item.pk %}">Like</a>
-                <a href="{% url 'edit_item' item.pk %}">Edit</a> <!-- Thêm liên kết chỉnh sửa -->
+                <a href="{% url 'edit_item' item.pk %}">Edit</a>
                 <a href="{% url 'delete_item' item.pk %}">Delete</a>
                 <a href="{% url 'add_comment' item.pk %}">Comment</a>
                 <ul>
