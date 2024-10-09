@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Item List</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/item_list.css' %}">
+</head>
+<body>
+
+{% for item in items %}
+<div class="item-container">
+    <h3>{{ item.name }}</h3>
+    <p>{{ item.description }}</p>
+    <img src="{{ item.image.url }}" alt="{{ item.name }}">
+    <p>Likes: {{ item.total_likes }}</p>
+    <div class="actions">
+        <a href="{% url 'like_item' item.pk %}">Like</a>
+        <a href="{% url 'edit_item' item.pk %}">Edit</a>
+        <a href="{% url 'delete_item' item.pk %}">Delete</a>
+        <a href="{% url 'add_comment' item.pk %}">Comment</a>
+    </div>
+    <div class="comments">
+        <h4>Comments</h4>
+        <ul>
+            {% for comment in item.comments.all %}
+            <li>{{ comment.user.username }}: {{ comment.text }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
+{% endfor %}
+<a href="{% url 'add_item' %}">Add New Item</a>
+</body>
+</html>
