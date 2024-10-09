@@ -1,11 +1,14 @@
-<!DOCTYPE html>
+
 {% load static %}
+<!DOCTYPE html>
+
 <html>
 <head>
     <title>Item Detail</title>
      <link rel="stylesheet" type="text/css" href="{% static 'css/item_detail.css' %}">
 </head>
 <body>
+
    <div class="item-container">
         <h2>{{ item.name }}</h2>
         <p>{{ item.description }}</p>
@@ -20,6 +23,7 @@
             <a href="{% url 'edit_item' item.pk %}">Edit</a>
             <a href="{% url 'delete_item' item.pk %}">Delete</a>
         </div>
+       <a href="{% url 'item_list' %}" class="btn btn-secondary mt-3 w-100">Back to Item List</a>
         <div class="comments">
             <h3>Comments</h3>
             <ul>
