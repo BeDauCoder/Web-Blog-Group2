@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 from .views import add_item,edit_item,delete_item,like_item,add_comment,item_list,item_detail,about,contact,draft_item_list
 urlpatterns = [
+    path('item/<int:pk>/', views.item_detail, name='item_detail'),
+     path('search/', views.search_items, name='search'),
     path("register/", views.register, name='register'),
     path("login/", views.user_login, name="login"),
     path("logout/", views.user_logout, name='logout'),
