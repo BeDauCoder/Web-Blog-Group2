@@ -28,6 +28,11 @@
                         <a class="nav-link" href="{% url 'draft_item_list' %}">Draft List</a>
                     </li>
                 </ul>
+                  <!-- Search form -->
+                  <form class="d-flex" action="{% url 'search' %}" method="GET">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item">

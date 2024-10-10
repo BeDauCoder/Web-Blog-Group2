@@ -16,7 +16,9 @@
         <p>Created at: {{ item.created_at }}</p>
         <p>Start Date: {{ item.start_date }}</p>
         <p>End Date: {{ item.end_date }}</p>
-        <img src="{{ item.image.url }}" alt="{{ item.name }}">
+        <!-- <img src="{{ item.image.url|default:'path/to/default/image.jpg' }}" alt="{{ item.name }}"> -->
+
+        <img src="{{ item.image.url }}" alt="{{ item.name }}"> 
         <p>Likes: {{ item.total_likes }}</p>
         <div class="actions">
             <a href="{% url 'like_item' item.pk %}">Like</a>
