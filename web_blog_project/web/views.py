@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import Item,Comment
 from .forms import ItemForm, CommentForm,ItemStatusForm
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 #######################################################
 """Author: VanDUng
 date:10/10/2025
@@ -54,9 +55,15 @@ def user_logout(request):
     return redirect('login')
 
 
+# def item_list(request):
+#     items = Item.objects.filter(status='published')
+#     return render(request, 'item_list.html', {'items': items})
 def item_list(request):
     items = Item.objects.filter(status='published')
-    return render(request, 'item_list.html', {'items': items})
+    paginator = Paginator(items, 6)  # Hiển thị 10 item mỗi trang
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'item_list.html', {'page_obj': page_obj, 'items': items})
 
 
 def add_item(request):
