@@ -5,6 +5,24 @@ from django.contrib import messages
 from .models import Item,Comment
 from .forms import ItemForm, CommentForm,ItemStatusForm
 from django.contrib.auth.decorators import login_required
+#######################################################
+"""Author: VanDUng
+date:10/10/2025
+feature: search item by item.Name and itemDescription"""
+from django.db.models import Q
+
+def search_items(request):
+    query = request.GET.get('q')  # Get the search query from the URL
+    results = []
+    
+    if query:
+        # Filter items based on the search query
+        results = Item.objects.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+        )  # Modify fields as per your Item model
+
+    return render(request, 'search_results.html', {'query': query, 'results': results})
+#####################################################
 
 def register(request):
     if request.method == 'POST':
