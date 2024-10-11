@@ -9,7 +9,7 @@ class ItemForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
-             'start_date': DateTimePickerInput(format='%Y-%m-%d %H:%M:%S'),
+            'start_date': DateTimePickerInput(format='%Y-%m-%d %H:%M:%S'),
             'end_date': DateTimePickerInput(format='%Y-%m-%d %H:%M:%S'),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),

@@ -6,6 +6,7 @@ from .models import Item,Comment
 from .forms import ItemForm, CommentForm,ItemStatusForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.http import HttpResponse
 #######################################################
 """Author: VanDUng
 date:10/10/2025
@@ -86,6 +87,8 @@ def edit_item(request, pk):
         if form.is_valid():
             form.save()
             return redirect('item_detail', pk=pk)
+        else:
+            return HttpResponse(form.errors.as_json())  # Thêm dòng này để kiểm tra lỗi trong form
     else:
         form = ItemForm(instance=item)
     return render(request, 'edit_item.html', {'form': form})
