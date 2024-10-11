@@ -6,9 +6,15 @@
     <style>
         body {
             background-color: #f4f4f4;
+            padding-top: 70px; /* Đảm bảo nội dung không bị ẩn dưới thanh navbar */
         }
         .navbar {
             background-color: rgba(173, 216, 230, 0.7);  /* lightblue with transparency */
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
         }
         .navbar-brand {
             font-weight: bold;
@@ -35,7 +41,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">TravelSite</a>
+            <a class="navbar-brand" href="#">Travel</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -53,6 +59,19 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'draft_item_list' %}">Draft List</a>
                     </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                            <li><a class="dropdown-item"href="{% url 'add_item' %}">Add Blog</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+
                 </ul>
                 <!-- Search form -->
                 <form class="d-flex" action="{% url 'search' %}" method="GET">

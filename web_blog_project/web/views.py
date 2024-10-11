@@ -60,10 +60,11 @@ def user_logout(request):
 #     return render(request, 'item_list.html', {'items': items})
 def item_list(request):
     items = Item.objects.filter(status='published')
+    hot_items = Item.objects.filter(status='published').order_by('-likes')[:3]
     paginator = Paginator(items, 6)  # Hiển thị 10 item mỗi trang
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'item_list.html', {'page_obj': page_obj, 'items': items})
+    return render(request, 'item_list.html', {'page_obj': page_obj, 'items': items,'hot_items': hot_items})
 
 
 def add_item(request):
@@ -73,7 +74,6 @@ def add_item(request):
             item = form.save(commit=False)
             item.created_by = request.user
             item.save()
-            messages.success(request, 'Item added successfully!')
             return redirect('item_list')
     else:
         form = ItemForm()
