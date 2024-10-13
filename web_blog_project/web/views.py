@@ -73,6 +73,7 @@ def add_item(request):
         form = ItemForm(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
+            item.status = 'Draft'
             item.created_by = request.user
             item.save()
             return redirect('item_list')
