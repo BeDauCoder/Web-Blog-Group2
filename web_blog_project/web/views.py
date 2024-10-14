@@ -1,7 +1,9 @@
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+<<<<<<< HEAD
 from .models import Item,Comment,Category
 from .forms import ItemForm, CommentForm,ItemStatusForm
 from django.contrib.auth.decorators import login_required
@@ -26,20 +28,30 @@ def post_list(request):
 
 """date:10/10/2025
 feature: search item by item.Name and itemDescription"""
+=======
+from django.core.paginator import Paginator
+from django.http import HttpResponse,HttpResponseForbidden
+>>>>>>> SangNguyen
 from django.db.models import Q
+from .models import Item, Comment
+from .forms import ItemForm, CommentForm, ItemStatusForm
 
+
+# Hàm kiểm tra xem người dùng có phải là superuser hay không
+def superuser_required(user):
+    return user.is_superuser
+
+
+@login_required
 def search_items(request):
-    query = request.GET.get('q')  # Get the search query from the URL
+    query = request.GET.get('q')  # Lấy thông tin tìm kiếm từ URL
     results = []
-    
     if query:
-        # Filter items based on the search query
         results = Item.objects.filter(
             Q(name__icontains=query) | Q(description__icontains=query)
-        )  # Modify fields as per your Item model
-
+        )
     return render(request, 'search_results.html', {'query': query, 'results': results})
-#####################################################
+
 
 def register(request):
     if request.method == 'POST':
@@ -54,6 +66,7 @@ def register(request):
             return redirect('login')
     return render(request, 'register.html')
 
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -66,13 +79,17 @@ def user_login(request):
             messages.error(request, 'Thông tin đăng nhập không hợp lệ')
     return render(request, 'login.html')
 
+
 def user_logout(request):
     logout(request)
     return redirect('login')
 
 
+<<<<<<< HEAD
 
 ####
+=======
+>>>>>>> SangNguyen
 def item_list(request):
     # Lấy tất cả các danh mục để hiển thị trong danh sách thả xuống
     categories = Category.objects.all()
@@ -120,12 +137,13 @@ def item_list(request):
    ###
     items = Item.objects.filter(status='published')
     hot_items = Item.objects.filter(status='published').order_by('-likes')[:3]
-    paginator = Paginator(items, 6)  # Hiển thị 10 item mỗi trang
+    paginator = Paginator(items, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'item_list.html', {'page_obj': page_obj, 'items': items,'hot_items': hot_items})
+    return render(request, 'item_list.html', {'page_obj': page_obj, 'items': items, 'hot_items': hot_items})
 
 
+@login_required
 def add_item(request):
     if request.method == "POST":
         form = ItemForm(request.POST, request.FILES)
@@ -139,25 +157,42 @@ def add_item(request):
         form = ItemForm()
     return render(request, 'add_item.html', {'form': form})
 
+
+@login_required
 def edit_item(request, pk):
     item = get_object_or_404(Item, pk=pk)
+
+    if item.created_by != request.user:
+        return HttpResponseForbidden(
+            '<script>alert("Bạn không có quyền chỉnh sửa bài viết này."); window.location.href = "/";</script>')
+
     if request.method == "POST":
         form = ItemForm(request.POST, request.FILES, instance=item)
         if form.is_valid():
             form.save()
             return redirect('item_detail', pk=pk)
         else:
-            return HttpResponse(form.errors.as_json())  # Thêm dòng này để kiểm tra lỗi trong form
+            return HttpResponse(form.errors.as_json())
     else:
         form = ItemForm(instance=item)
+
     return render(request, 'edit_item.html', {'form': form})
 
+
+@login_required
 def delete_item(request, pk):
     item = get_object_or_404(Item, pk=pk)
+
+    if item.created_by != request.user:
+        return HttpResponseForbidden(
+            '<script>alert("Bạn không có quyền xóa bài viết này."); window.location.href = "/";</script>')
+
     if request.method == "POST":
         item.delete()
         return redirect('item_list')
+
     return render(request, 'delete_item.html', {'item': item})
+
 
 @login_required
 def like_item(request, pk):
@@ -168,6 +203,8 @@ def like_item(request, pk):
         item.likes.add(request.user)
     return redirect('item_detail', pk=pk)
 
+
+@login_required
 def add_comment(request, pk):
     item = get_object_or_404(Item, pk=pk)
     if request.method == "POST":
@@ -182,6 +219,7 @@ def add_comment(request, pk):
         form = CommentForm()
     return render(request, 'add_comment.html', {'form': form})
 
+
 def item_detail(request, pk):
     item = get_object_or_404(Item, pk=pk)
     comments = Comment.objects.filter(item=item)
@@ -190,11 +228,18 @@ def item_detail(request, pk):
 
 def about(request):
     return render(request, 'about.html')
+
+
 def contact(request):
     return render(request, 'contact.html')
 
 
+@login_required
+@user_passes_test(superuser_required)
 def draft_item_list(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden('<script>alert("Bạn không phải admin"); window.location.href = "/";</script>')
+
     drafts = Item.objects.filter(status='Draft')
     if request.method == 'POST':
         form = ItemStatusForm(request.POST)
@@ -203,8 +248,8 @@ def draft_item_list(request):
             item = get_object_or_404(Item, id=item_id)
             item.status = form.cleaned_data['status']
             item.save()
-            messages.success(request, 'Item status updated successfully!')
+            messages.success(request, 'Trạng thái của mục đã được cập nhật thành công!')
             return redirect('draft_item_list')
     else:
         form = ItemStatusForm()
-    return render(request, 'draft_item_list.html', {'drafts': drafts, 'form':form})
+    return render(request, 'draft_item_list.html', {'drafts': drafts, 'form': form})
