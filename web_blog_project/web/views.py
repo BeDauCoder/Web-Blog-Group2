@@ -135,8 +135,9 @@ def about(request):
 def contact(request):
     return render(request, 'contact.html')
 
+
 def draft_item_list(request):
-    drafts = Item.objects.filter(status='draft')
+    drafts = Item.objects.filter(status='Draft')
     if request.method == 'POST':
         form = ItemStatusForm(request.POST)
         if form.is_valid():

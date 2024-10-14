@@ -23,6 +23,7 @@
                             <a href="{% url 'item_detail' item.pk %}">
                                 <h5 class="card-title">{{ item.name }}</h5>
                             </a>
+                            <p class="card-text"><small class="text-muted">Information about: {{ item.information_about }}</small></p>
                             <p class="card-text"><small class="text-muted">Likes: {{ item.total_likes }}</small></p>
                             <div class="d-flex justify-content-between">
                                 <a href="{% url 'like_item' item.pk %}" class="btn btn-primary">Like</a>
