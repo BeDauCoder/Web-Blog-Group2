@@ -1,7 +1,12 @@
 from django import forms
-from .models import Item, Comment
+from .models import Item, Comment,Category
 from bootstrap_datepicker_plus.widgets import DateTimePickerInput
 from django_summernote.widgets import SummernoteWidget
+##################
+class CategoryFilterForm(forms.Form):
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, label="Filter by Category")
+# ################
+
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
