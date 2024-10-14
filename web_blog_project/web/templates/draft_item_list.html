@@ -8,15 +8,15 @@
 <body>
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4 text-center">Danh Sách Item Nháp</h2>
+    <h2 class="mb-4 text-center">List Item Drafts</h2>
     <div class="row">
         {% for item in drafts %}
-        <div class="col-md-4">
+        <div class="col-md-12">
             <div class="card mb-4">
                 <img class="card-img-top" src="{{ item.image.url }}" alt="{{ item.name }}">
                 <div class="card-body">
-                    <h5 class="card-title">{{ item.name }}</h5>
-                    <p class="card-text">{{ item.description }}</p>
+                    <h1 class="card-title">{{ item.name }}</h1>
+                    <p class="card-text">{{ item.description|safe }}</p>
                     <p class="card-text">Giá: {{ item.price }}</p>
                     <p class="card-text">Ngày Bắt Đầu: {{ item.start_date }}</p>
                     <p class="card-text">Ngày Kết Thúc: {{ item.end_date }}</p>

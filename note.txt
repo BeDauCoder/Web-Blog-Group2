@@ -9,6 +9,7 @@ django-admin startproject mysite
 python manage.py startapp <app_name>
 
 pip install django-allauth
+pip install django-summernote
 
 Account: SuperUser
 BeDauCoder

@@ -5,6 +5,8 @@ from django.contrib import messages
 from .models import Item,Comment
 from .forms import ItemForm, CommentForm,ItemStatusForm
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.http import HttpResponse
 #######################################################
 """Author: VanDUng
 date:10/10/2025
@@ -54,9 +56,16 @@ def user_logout(request):
     return redirect('login')
 
 
+# def item_list(request):
+#     items = Item.objects.filter(status='published')
+#     return render(request, 'item_list.html', {'items': items})
 def item_list(request):
     items = Item.objects.filter(status='published')
-    return render(request, 'item_list.html', {'items': items})
+    hot_items = Item.objects.filter(status='published').order_by('-likes')[:3]
+    paginator = Paginator(items, 6)  # Hiển thị 10 item mỗi trang
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'item_list.html', {'page_obj': page_obj, 'items': items,'hot_items': hot_items})
 
 
 def add_item(request):
@@ -64,9 +73,9 @@ def add_item(request):
         form = ItemForm(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
+            item.status = 'Draft'
             item.created_by = request.user
             item.save()
-            messages.success(request, 'Item added successfully!')
             return redirect('item_list')
     else:
         form = ItemForm()
@@ -79,6 +88,8 @@ def edit_item(request, pk):
         if form.is_valid():
             form.save()
             return redirect('item_detail', pk=pk)
+        else:
+            return HttpResponse(form.errors.as_json())  # Thêm dòng này để kiểm tra lỗi trong form
     else:
         form = ItemForm(instance=item)
     return render(request, 'edit_item.html', {'form': form})
@@ -124,8 +135,9 @@ def about(request):
 def contact(request):
     return render(request, 'contact.html')
 
+
 def draft_item_list(request):
-    drafts = Item.objects.filter(status='draft')
+    drafts = Item.objects.filter(status='Draft')
     if request.method == 'POST':
         form = ItemStatusForm(request.POST)
         if form.is_valid():
