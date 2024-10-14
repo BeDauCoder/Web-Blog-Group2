@@ -3,37 +3,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
-<<<<<<< HEAD
-from .models import Item,Comment,Category
-from .forms import ItemForm, CommentForm,ItemStatusForm
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-from django.http import HttpResponse
-#######################################################
-"""Author: VanDUng
-# date:14/10/2025 filter by catogrories
-"""
-from .models import Item
-from .forms import CategoryFilterForm
-
-def post_list(request):
-    form = CategoryFilterForm(request.GET or None)
-    items = Item.objects.all()
-
-    if form.is_valid() and form.cleaned_data['category']:
-        items = items.filter(category=form.cleaned_data['category'])
-
-    return render(request, 'item_list.html', {'items': items, 'form': form})
-
-
-"""date:10/10/2025
-feature: search item by item.Name and itemDescription"""
-=======
 from django.core.paginator import Paginator
 from django.http import HttpResponse,HttpResponseForbidden
->>>>>>> SangNguyen
 from django.db.models import Q
-from .models import Item, Comment
+from .models import Item, Comment,Category
 from .forms import ItemForm, CommentForm, ItemStatusForm
 
 
@@ -85,26 +58,21 @@ def user_logout(request):
     return redirect('login')
 
 
-<<<<<<< HEAD
-
-####
-=======
->>>>>>> SangNguyen
 def item_list(request):
     # Lấy tất cả các danh mục để hiển thị trong danh sách thả xuống
     categories = Category.objects.all()
-    
+
     # Lấy danh mục được chọn từ yêu cầu, nếu có
     selected_category = request.GET.get('category')
-    
+
     # Lọc các item dựa trên danh mục đã chọn (nếu có), nếu không sẽ hiển thị tất cả
     if selected_category:
         items = Item.objects.filter(category_id=selected_category, status='published')
     else:
         items = Item.objects.filter(status='published')
-    
+
     hot_items = Item.objects.filter(status='published').order_by('-likes')[:3]
-   
+
     # Phân trang
     paginator = Paginator(items, 6)  # Hiển thị 6 item mỗi trang
     page_number = request.GET.get('page')
@@ -112,32 +80,28 @@ def item_list(request):
 
     # Truyền categories vào ngữ cảnh
     return render(request, 'item_list.html', {
-        'page_obj': page_obj, 
+        'page_obj': page_obj,
         'hot_items': hot_items,
         'categories': categories,  # Truyền categories để hiển thị trong mẫu
     })
-#####
-# def item_list(request):
-    
-   ###
-      # Lấy tất cả các danh mục để hiển thị trong danh sách thả xuống
+    # Lấy tất cả các danh mục để hiển thị trong danh sách thả xuống
     categories = Category.objects.all()
-    
+
     # Lấy danh mục được chọn từ yêu cầu, nếu có
     selected_category = request.GET.get('category')
-    
+
     # Lọc các item dựa trên danh mục đã chọn (nếu có), nếu không sẽ hiển thị tất cả
     if selected_category:
         items = Item.objects.filter(category_id=selected_category, status='published')
     else:
         items = Item.objects.filter(status='published')
-    
+
     hot_items = Item.objects.filter(status='published').order_by('-likes')[:3]
-   
-   ###
+
+    ###
     items = Item.objects.filter(status='published')
     hot_items = Item.objects.filter(status='published').order_by('-likes')[:3]
-    paginator = Paginator(items, 6)
+    paginator = Paginator(items, 6)  # Hiển thị 10 item mỗi trang
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'item_list.html', {'page_obj': page_obj, 'items': items, 'hot_items': hot_items})
