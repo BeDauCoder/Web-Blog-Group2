@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "web",
     "bootstrap_datepicker_plus",
+    "django_summernote",
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "web.middleware.UploadFileSizeLimit",
 ]
 
 ROOT_URLCONF = "web_blog_project.urls"
@@ -127,3 +129,21 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+MAX_UPLOAD_SIZE = 10485760  # 10 * 1024 * 1024 bytes
+
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_SIZE
+FILE_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_SIZE
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+
+SUMMERNOTE_CONFIG = {
+    'attachment_filesize_limit': 10485760,  # 10 * 1024 * 1024 bytes
+}
+
+
