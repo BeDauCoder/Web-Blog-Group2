@@ -1,22 +1,25 @@
 {% extends "base.html" %}
 
-{% block title %}Search Results{% endblock %}
+{% block title %}Kết quả Tìm kiếm{% endblock %}
 
 {% block content %}
-  <h1>Search Results for "{{ query }}"</h1>
-
-  {% if results %}
-  <ul>
-      {% for item in results %}
-          <li>
-              <a href="{% url 'item_detail' item.pk %}">{{ item.name }}</a> - {{ item.description }}
-          </li>
-      {% endfor %}
-  </ul>
-{% else %}
-  <p>Không tìm thấy kết quả nào.</p>
-{% endif %}
-
-<a href="{% url 'item_list' %}">Quay lại danh sách </a>
-
+    <div class="container mt-5">
+        <h1 class="mb-4">Kết quả tìm kiếm cho "{{ query }}"</h1>
+        {% if results %}
+            <ul class="list-group">
+                {% for item in results %}
+                    <li class="list-group-item">
+                        <a href="{% url 'item_detail' item.pk %}">
+                            <h1>{{ item.name }}}</h1>
+                        </a> - {{ item.description|safe }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                Không tìm thấy kết quả nào.
+            </div>
+        {% endif %}
+        <a href="{% url 'item_list' %}" class="btn btn-primary mt-3">Quay lại danh sách</a>
+    </div>
 {% endblock %}

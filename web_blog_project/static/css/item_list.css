@@ -74,3 +74,38 @@
 .hot-items h4 {
     margin-top: 0;
 }
+
+/* item_list.css */
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-img-top {
+    height: 150px; /* or any fixed height */
+    object-fit: cover;
+}
+
+.card-title {
+    flex-grow: 0;
+}
+
+.card-text {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Number of lines to show */
+    -webkit-box-orient: vertical;
+}
+
+.d-flex {
+    margin-top: auto;
+}
