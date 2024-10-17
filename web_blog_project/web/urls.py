@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import add_item, edit_item, delete_item, like_item, add_comment, item_list, item_detail, about, contact, \
-    draft_item_list
+    draft_item_list,chatbot_view
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -21,10 +21,7 @@ urlpatterns = [
     path('about/', about, name='about'),
     path('contact/', contact, name='contact'),
     path('drafts/', draft_item_list, name='draft_item_list'),
-    path('password_reset/', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'),name='password_reset'),
-    path('password_reset/done/',auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'),name='password_reset_done'),
-    path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'),name='password_reset_confirm'),
-    path('reset/done/',auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),name='password_reset_complete'),
+    path('chatbot/',chatbot_view,name='chatbot'),
     # path('chat/', views.chat_view, name='chat_view'),
     # path('chats/<int:chat_id>/', views.chat_view, name='chat_detail'),
 ]

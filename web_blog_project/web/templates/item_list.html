@@ -40,8 +40,8 @@
                     <div class="card mb-4">
                         <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
                         <div class="card-body">
-                            <a href="{% url 'item_detail' item.pk %}">
-                                <h5 class="card-title">{{ item.name }}</h5>
+                            <a href="{% url 'item_detail' item.pk %}" style="height: 120px">
+                                <h5 class="card-title">{{ item.name|truncatechars:100 }}</h5>
                             </a>
                             <p class="card-text">
                                 <small class="text-muted">Information about: {{ item.information_about|truncatechars:100 }}</small>

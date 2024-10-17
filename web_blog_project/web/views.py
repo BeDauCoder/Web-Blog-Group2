@@ -1,16 +1,19 @@
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from django.contrib import messages
 from django.core.paginator import Paginator
-from django.http import HttpResponse,HttpResponseForbidden
+from django.http import HttpResponse,HttpResponseForbidden,JsonResponse
 from django.db.models import Q
 from .models import Item, Comment,Category,Message,Chat
-from .forms import ItemForm, CommentForm, ItemStatusForm
+from .forms import ItemForm, CommentForm, ItemStatusForm,ChatForm
 from PIL import Image
-import os
+import os,datetime
 from django.contrib.auth.views import PasswordResetDoneView
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.models import User
+import logging
+from django.urls import reverse
+
 
 
 # Hàm kiểm tra xem người dùng có phải là superuser hay không
@@ -163,10 +166,7 @@ def edit_item(request, pk):
 
     return render(request, 'edit_item.html', {'form': form})
 
-
-login_required
-
-
+@login_required
 def delete_item(request, pk):
     item = get_object_or_404(Item, pk=pk)
 
@@ -225,12 +225,109 @@ def contact(request):
     return render(request, 'contact.html')
 
 
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.http import HttpResponseForbidden
-from .models import Item
-from .forms import ItemStatusForm
+
+def chatbot_view(request):
+    form = ChatForm()
+    categories = Category.objects.all()
+
+    # Khởi tạo danh sách hội thoại để lưu trữ cuộc trò chuyện từ session
+    conversation = request.session.get('conversation', [])
+
+    # Kiểm tra nếu người dùng yêu cầu reset cuộc trò chuyện
+    if request.method == 'POST':
+        if 'reset' in request.POST:
+            # Xóa session lưu hội thoại và reset cuộc trò chuyện
+            request.session['conversation'] = []
+            conversation = []  # Reset conversation về trống
+        else:
+            form = ChatForm(request.POST)
+            if form.is_valid():
+                message = form.cleaned_data['message'].lower()
+
+                # Lưu tin nhắn của người dùng vào hội thoại
+                conversation.append({'text': message, 'sender': 'user'})
+
+                # Xử lý tin nhắn của người dùng và tạo phản hồi
+                response = ""
+                if 'danh mục' in message and ('bao nhiêu' in message or 'liệt kê' in message):
+                    if 'bao nhiêu' in message:
+                        response = f"Hiện có {categories.count()} danh mục."
+                    elif 'liệt kê' in message:
+                        response = "Danh sách các danh mục: " + ", ".join([category.name for category in categories])
+                elif 'bài viết mới nhất' in message:
+                    latest_item = Item.objects.filter(status='published').order_by('-created_at').first()
+                    if latest_item:
+                        item_detail_url = reverse('item_detail', args=[latest_item.pk])
+                        response = (f"Bài viết mới nhất là '<a href=\"{item_detail_url}\">{latest_item.name}</a>':<br>"
+                                    f"Thời gian tạo: {latest_item.created_at}")
+                    else:
+                        response = "Không có bài viết nào."
+                elif 'bài viết của' in message:
+                    try:
+                        username = message.split('bài viết của ')[1].strip()
+                        user = User.objects.get(username=username)
+                        user_items = Item.objects.filter(created_by=user, status='published')
+                        if user_items:
+                            response = "Danh sách các bài viết của " + username + ":<br>"
+                            for item in user_items:
+                                item_detail_url = reverse('item_detail', args=[item.pk])
+                                response += f'<a href="{item_detail_url}">{item.name}</a><br><br>'
+                        else:
+                            response = f"Không có bài viết nào của người dùng {username}."
+                    except User.DoesNotExist:
+                        response = f"Người dùng {username} không tồn tại."
+                elif 'tài chính tôi hiện có' in message:
+                    try:
+                        price_str = message.split('tài chính tôi hiện có')[1].strip()
+                        price = float(price_str.split(' ')[0])
+                        affordable_items = Item.objects.filter(price__lte=price, status='published')
+                        if affordable_items:
+                            response = f"Các bài viết liên quan đến mức giá {price}:<br>"
+                            for item in affordable_items:
+                                item_detail_url = reverse('item_detail', args=[item.pk])
+                                response += f'<a href="{item_detail_url}">{item.name}</a> - Giá: {item.price}<br>'
+                        else:
+                            response = "Không có bài viết nào phù hợp với mức giá đó."
+                    except ValueError:
+                        response = "Xin vui lòng nhập số tiền hợp lệ."
+                elif 'các sự kiện vào tháng' in message:
+                    try:
+                        month_str = message.split('các sự kiện vào tháng ')[1].strip()
+                        month = int(month_str)
+                        items_in_month = Item.objects.filter(start_date__month=month, status='published')
+                        if items_in_month:
+                            response = f"Các bài viết trong tháng {month}:<br>"
+                            for item in items_in_month:
+                                item_detail_url = reverse('item_detail', args=[item.pk])
+                                response += f'<a href="{item_detail_url}">{item.name}</a> - Ngày bắt đầu: {item.start_date}<br>'
+                        else:
+                            response = f"Không có bài viết nào trong tháng {month}."
+                    except ValueError:
+                        response = "Xin vui lòng nhập tháng hợp lệ."
+                elif 'bài viết vào ngày' in message:
+                    try:
+                        day_str = message.split('bài viết vào ngày ')[1].strip()
+                        date = datetime.datetime.strptime(day_str, '%Y-%m-%d').date()
+                        items_on_date = Item.objects.filter(start_date=date, status='published')
+                        if items_on_date:
+                            response = f"Các bài viết vào ngày {date}:<br>"
+                            for item in items_on_date:
+                                item_detail_url = reverse('item_detail', args=[item.pk])
+                                response += f'<a href="{item_detail_url}">{item.name}</a> - Ngày bắt đầu: {item.start_date}<br>'
+                        else:
+                            response = f"Không có bài viết nào vào ngày {date}."
+                    except ValueError:
+                        response = "Xin vui lòng nhập ngày hợp lệ (YYYY-MM-DD)."
+                else:
+                    response = "Xin lỗi, tôi không hiểu câu hỏi của bạn. Hãy hỏi lại."
+
+                # Thêm phản hồi của bot vào hội thoại
+                conversation.append({'text': response, 'sender': 'bot'})
+
+                # Cập nhật session để lưu hội thoại
+                request.session['conversation'] = conversation
+
+    return render(request, 'chat_bot.html', {'form': form, 'conversation': conversation})
 
 
 def superuser_required(user):
@@ -259,38 +356,34 @@ def draft_item_list(request):
     return render(request, 'draft_item_list.html', {'drafts': drafts, 'form': form})
 
 
-# views.py
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Chat, Message
-from django.contrib.auth.models import User
 
 
-@login_required
-def chat_view(request, chat_id=None):
-    chats = request.user.chats.all()
-    selected_chat = None
 
-    if chat_id:
-        selected_chat = get_object_or_404(Chat, pk=chat_id)
-        if request.user not in selected_chat.participants.all():
-            return redirect('chat_view')
-        if request.method == 'POST' and 'content' in request.POST:
-            content = request.POST.get('content')
-            if content:
-                Message.objects.create(chat=selected_chat, sender=request.user, content=content)
-
-    if request.method == 'POST' and 'create_chat' in request.GET:
-        usernames = request.POST.getlist('users')
-        users = User.objects.filter(username__in=usernames)
-        chat = Chat.objects.create()
-        chat.participants.set(users)
-        chat.participants.add(request.user)
-        chat.save()
-        return redirect('chat_detail', chat_id=chat.id)
-
-    return render(request, 'chat_detail.html',
-                  {'chats': chats, 'selected_chat': selected_chat, 'users': User.objects.all()})
+# @login_required
+# def chat_view(request, chat_id=None):
+#     chats = request.user.chats.all()
+#     selected_chat = None
+#
+#     if chat_id:
+#         selected_chat = get_object_or_404(Chat, pk=chat_id)
+#         if request.user not in selected_chat.participants.all():
+#             return redirect('chat_view')
+#         if request.method == 'POST' and 'content' in request.POST:
+#             content = request.POST.get('content')
+#             if content:
+#                 Message.objects.create(chat=selected_chat, sender=request.user, content=content)
+#
+#     if request.method == 'POST' and 'create_chat' in request.GET:
+#         usernames = request.POST.getlist('users')
+#         users = User.objects.filter(username__in=usernames)
+#         chat = Chat.objects.create()
+#         chat.participants.set(users)
+#         chat.participants.add(request.user)
+#         chat.save()
+#         return redirect('chat_detail', chat_id=chat.id)
+#
+#     return render(request, 'chat_detail.html',
+#                   {'chats': chats, 'selected_chat': selected_chat, 'users': User.objects.all()})
 
 
 

@@ -40,3 +40,10 @@ class ItemStatusForm(forms.ModelForm):
         widgets = {
             'status': forms.Select(attrs={'class': 'form-control'}),
         }
+
+class ChatForm(forms.Form):
+    message = forms.CharField(max_length=255, widget=forms.TextInput(attrs={
+        'placeholder': 'Nhập tin nhắn...',
+        'class': 'form-control',
+        'autocomplete': 'off'
+    }))
