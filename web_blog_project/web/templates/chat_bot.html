@@ -115,12 +115,4 @@
         </div>
     </div>
 </div>
-<script>
-    document.getElementById('chat-form').addEventListener('submit', function(event) {
-        // Sau khi form được gửi, xóa giá trị của input
-        setTimeout(function() {
-            document.querySelector('#chat-form input[type="text"]').value = '';
-        }, 10);  // Thêm độ trễ nhỏ để chắc chắn form đã được submit
-    });
-</script>
 {% endblock %}

@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 {% load static %}
+{% load socialaccount %}
 <html>
 <head>
     <title>Register</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/register.css' %}">
 </head>
 <body>
-    <div class="container">
-        <form method="post">
-            {% csrf_token %}
-            <h2>Register</h2>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <button type="submit">Register</button>
-            <a href="{% url 'login' %}">Login</a>
-            <div class="messages">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        </form>
-    </div>
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        <h2>Register</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <button type="submit">Register</button>
+        <a href="{% url 'login' %}">Login</a>
+        <h2>Đăng ký bằng:</h2>
+
+<!--
+        <div class="messages">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    </form>
+</div>
 </body>
 </html>

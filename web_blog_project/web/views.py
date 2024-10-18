@@ -11,8 +11,10 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
-import logging
+from django.http import Http404
 from django.urls import reverse
+from django.contrib.auth.views import PasswordResetView
+from django.conf import settings
 
 
 
@@ -20,10 +22,11 @@ from django.urls import reverse
 def superuser_required(user):
     return user.is_superuser
 
-class CustomPasswordResetDoneView(PasswordResetDoneView):
+class CustomPasswordResetView(PasswordResetView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['is_nav_sidebar_enabled'] = False  # hoặc True, tùy thuộc vào yêu cầu
+        context['domain'] = '127.0.0.1:8000'
+        context['protocol'] = 'https'  # hoặc 'http' nếu không dùng SSL protocol
         return context
 
 @login_required
@@ -358,32 +361,20 @@ def draft_item_list(request):
 
 
 
+def edit_draft(request, pk):
+    try:
+        item = Item.objects.get(pk=pk, status='Draft')
+    except Item.DoesNotExist:
+        raise Http404("Item không tồn tại hoặc không ở trạng thái 'draft'.")
 
-# @login_required
-# def chat_view(request, chat_id=None):
-#     chats = request.user.chats.all()
-#     selected_chat = None
-#
-#     if chat_id:
-#         selected_chat = get_object_or_404(Chat, pk=chat_id)
-#         if request.user not in selected_chat.participants.all():
-#             return redirect('chat_view')
-#         if request.method == 'POST' and 'content' in request.POST:
-#             content = request.POST.get('content')
-#             if content:
-#                 Message.objects.create(chat=selected_chat, sender=request.user, content=content)
-#
-#     if request.method == 'POST' and 'create_chat' in request.GET:
-#         usernames = request.POST.getlist('users')
-#         users = User.objects.filter(username__in=usernames)
-#         chat = Chat.objects.create()
-#         chat.participants.set(users)
-#         chat.participants.add(request.user)
-#         chat.save()
-#         return redirect('chat_detail', chat_id=chat.id)
-#
-#     return render(request, 'chat_detail.html',
-#                   {'chats': chats, 'selected_chat': selected_chat, 'users': User.objects.all()})
+    if request.method == 'POST':
+        form = ItemForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect('item_detail', pk=item.pk)
+    else:
+        form = ItemForm(instance=item)
+    return render(request, 'edit_draft.html', {'form': form, 'item': item})
 
 
 
