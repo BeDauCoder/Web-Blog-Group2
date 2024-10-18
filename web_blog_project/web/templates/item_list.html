@@ -53,9 +53,10 @@
 <body> 
 
     
-    <div class="text-center my-5 py-5">
+    <!-- <div class="text-center my-5 py-5">
         <h2 class="font-weight-light">Carousel Bootstrap Nhiều Item</h2>
         <div class="row mx-auto my-auto justify-content-start bg-secondary mb-3">
+            
             <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner" role="listbox">
                     <div class="carousel-item active">
@@ -92,7 +93,7 @@
                         <div class="col-md-3">
                             <div class="card">
                                 <div class="card-img">
-                                    <img src="{% static 'images/conan2.jpg' %}" class="img-fluid">
+                                    <img src="{% static 'images/bphoto1.jpg' %}" class="img-fluid">
                                 </div>
                                 <div class="card-img-overlay">Slide 4</div>
                             </div>
@@ -102,7 +103,7 @@
                         <div class="col-md-3">
                             <div class="card">
                                 <div class="card-img">
-                                    <img src="{% static 'images/conan2.jpg' %}" class="img-fluid">
+                                    <img src="{% static 'images/bphoto2.jpg' %}" class="img-fluid">
                                 </div>
                                 <div class="card-img-overlay">Slide 5</div>
                             </div>
@@ -128,7 +129,43 @@
             </div>
         </div>
         <h5 class="mt-2 fw-light">Chuyển động nhiều slide cùng lúc</h5>
+    </div> -->
+    <div class="text-center my-5 py-5">
+        <h2 class="font-weight-light">weather anywhere</h2>
+        <div class="row mx-auto my-auto justify-content-start bg-secondary mb-3">
+            
+            <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="1500">
+                <div class="carousel-inner" role="listbox">
+                    {% for item in weather_forecasts %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="col-md-3 py-5 px-2"> 
+                            <div class="card border border-primary hover-shadow" style="height: 220px; width: 310px; background: lightblue;">
+                                <div class="card-img pt-5">
+                                    <img src="https://openweathermap.org/img/wn/{{ item.forecast.weather.0.icon }}@2x.png"
+                                         class="img-fluid" alt="Weather Icon">
+                                </div>
+                                <div class="card-img-overlay">
+                                    <h4>{{ item.forecast.dt_txt }} <br>({{ item.city }})</h4>
+                                    <p class="pt-5">Nhiệt độ: {{ item.forecast.main.temp }}°C</p>
+                                    <p class="position-absolute" style="margin-top: 15px; left: 20px; color: darkblue;">Thời tiết: {{ item.forecast.weather.0.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    {% endfor %}
+                </div>
+                <a class="carousel-control-prev bg-transparent w-aut" href="#imageCarousel" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </a>
+                <a class="carousel-control-next bg-transparent w-aut" href="#imageCarousel" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </a>
+            </div>
+        </div>
     </div>
+    
+    
     
     <div class=" d-flex justify-content-center">
         <div class="container mt-4">

@@ -108,14 +108,19 @@ def item_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-#    # Danh sách các thành phố cho dự báo thời tiết
-    cities = ["Hanoi", "Ho Chi Minh City", "Da Nang"]
-    weather_forecasts = {}
+    ## Danh sách các thành phố cho dự báo thời tiết
+    cities = ["Hanoi", "Ho Chi Minh City", "Da Nang","Nha Trang","BangKok","Singapore","Jakara","Phuket","Phu Ly"]
+    weather_forecasts = []
 
-#     # Lấy dự báo thời tiết cho từng thành phố
+    # Lấy một dự báo duy nhất cho từng thành phố
     for city in cities:
-        weather_forecasts[city] = get_weather_forecast(city)  # Hàm này cần trả về dự báo cho từng thành phố
-   
+        forecasts = get_weather_forecast(city)  # Hàm này trả về một danh sách dự báo cho thành phố
+        if forecasts:
+            # Chọn dự báo đầu tiên (hoặc một dự báo cụ thể)
+            weather_forecasts.append({
+                'city': city,
+                'forecast': forecasts[0]  # Lấy dự báo đầu tiên
+            })
 
 
     # Chuẩn bị dữ liệu ngữ cảnh cho mẫu
@@ -123,7 +128,7 @@ def item_list(request):
         'page_obj': page_obj,
         'hot_items': hot_items,
         'categories': categories,
-        'weather_forecasts': weather_forecasts,
+        'weather_forecasts': weather_forecasts,  # Đây là một danh sách phẳng chứa tất cả các dự báo
     }
 
     return render(request, 'item_list.html', context)
