@@ -5,25 +5,40 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 <<<<<<< HEAD
 from .models import Item,Comment,Category
-from .forms import ItemForm, CommentForm,ItemStatusForm
+from .forms import ItemForm, CommentForm,ItemStatusForm,CategoryFilterForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponse
+import requests 
 #######################################################
 """Author: VanDUng
 # date:14/10/2025 filter by catogrories
 """
-from .models import Item
-from .forms import CategoryFilterForm
+def get_weather_forecast(city):
+    try:
+        with open("API_KEY", "r") as file:
+            API_KEY = file.read().strip()  # Đọc khóa API và loại bỏ khoảng trắng
+    except Exception as e:
+        print(f"Error reading API key: {e}")
+        return []  # Trả về danh sách rỗng nếu không thể đọc khóa API
 
-def post_list(request):
-    form = CategoryFilterForm(request.GET or None)
-    items = Item.objects.all()
+    forecast_url = f'https://api.openweathermap.org/data/2.5/forecast?q={city}&appid={API_KEY}&units=metric'
+    
+    try:
+        response = requests.get(forecast_url)
+        response.raise_for_status()  # Kiểm tra mã trạng thái
+        return response.json().get('list', [])  # Dữ liệu dự báo trong key 'list'
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+    except requests.exceptions.ConnectionError as conn_err:
+        print(f"Connection error occurred: {conn_err}")
+    except requests.exceptions.Timeout as timeout_err:
+        print(f"Timeout error occurred: {timeout_err}")
+    except requests.exceptions.RequestException as req_err:
+        print(f"Request error occurred: {req_err}")
 
-    if form.is_valid() and form.cleaned_data['category']:
-        items = items.filter(category=form.cleaned_data['category'])
+    return []  # Trả về danh sách rỗng nếu có lỗi
 
-    return render(request, 'item_list.html', {'items': items, 'form': form})
 
 
 """date:10/10/2025
@@ -97,19 +112,20 @@ def item_list(request):
     # Lấy danh mục được chọn từ yêu cầu, nếu có
     selected_category = request.GET.get('category')
     
-    # Lọc các item dựa trên danh mục đã chọn (nếu có), nếu không sẽ hiển thị tất cả
+     # Lọc các item dựa trên danh mục đã chọn (nếu có), nếu không sẽ hiển thị tất cả
     if selected_category:
-        items = Item.objects.filter(category_id=selected_category, status='published')
+        items = Item.objects.filter(category_id=selected_category, status='published').order_by('-created_at')  # Hoặc thuộc tính bạn muốn
     else:
-        items = Item.objects.filter(status='published')
+        items = Item.objects.filter(status='published').order_by('-created_at')  # Hoặc thuộc tính bạn muốn
     
     hot_items = Item.objects.filter(status='published').order_by('-likes')[:3]
-   
+    
     # Phân trang
     paginator = Paginator(items, 6)  # Hiển thị 6 item mỗi trang
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+<<<<<<< HEAD
     # Truyền categories vào ngữ cảnh
     return render(request, 'item_list.html', {
         'page_obj': page_obj, 
@@ -141,7 +157,32 @@ def item_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'item_list.html', {'page_obj': page_obj, 'items': items, 'hot_items': hot_items})
+=======
+    ## Danh sách các thành phố cho dự báo thời tiết
+    cities = ["Hanoi", "Ho Chi Minh City", "Da Nang","Nha Trang","BangKok","Singapore","Jakara","Phuket","Phu Ly"]
+    weather_forecasts = []
+>>>>>>> VanDung
 
+    # Lấy một dự báo duy nhất cho từng thành phố
+    for city in cities:
+        forecasts = get_weather_forecast(city)  # Hàm này trả về một danh sách dự báo cho thành phố
+        if forecasts:
+            # Chọn dự báo đầu tiên (hoặc một dự báo cụ thể)
+            weather_forecasts.append({
+                'city': city,
+                'forecast': forecasts[0]  # Lấy dự báo đầu tiên
+            })
+
+
+    # Chuẩn bị dữ liệu ngữ cảnh cho mẫu
+    context = {
+        'page_obj': page_obj,
+        'hot_items': hot_items,
+        'categories': categories,
+        'weather_forecasts': weather_forecasts,  # Đây là một danh sách phẳng chứa tất cả các dự báo
+    }
+
+    return render(request, 'item_list.html', context)
 
 @login_required
 def add_item(request):
