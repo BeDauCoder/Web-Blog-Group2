@@ -1,0 +1,54 @@
+
+{% block content %}
+  <h2>Chat</h2>
+
+  <!-- Danh sách Chat -->
+  <div id="chat-list">
+    <h3>Danh sách Chat</h3>
+    <ul>
+      {% for chat in chats %}
+        <li><a href="?chat_id={{ chat.id }}">{{ chat }}</a></li>
+      {% endfor %}
+    </ul>
+    <a href="#" id="create-chat-btn">Tạo chat mới</a>
+  </div>
+
+  <!-- Chi tiết Chat -->
+  {% if selected_chat %}
+    <div id="chat-detail">
+      <h3>Chi tiết Chat</h3>
+      <div id="chat-box">
+        {% for message in selected_chat.messages.all %}
+          <p><strong>{{ message.sender.username }}:</strong> {{ message.content }} <small>{{ message.timestamp }}</small></p>
+        {% endfor %}
+      </div>
+      <form method="post" action="?chat_id={{ selected_chat.id }}">
+        {% csrf_token %}
+        <textarea name="content" placeholder="Nhập tin nhắn của bạn..."></textarea>
+        <button type="submit">Gửi</button>
+      </form>
+    </div>
+  {% endif %}
+
+  <!-- Form Tạo Chat -->
+  <div id="create-chat-form" style="display: none;">
+    <h3>Tạo Chat</h3>
+    <form method="post" action="?create_chat=true">
+      {% csrf_token %}
+      <label for="users">Chọn người dùng để chat:</label>
+      <select name="users" id="users" multiple>
+        {% for user in users %}
+          <option value="{{ user.username }}">{{ user.username }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Bắt đầu Chat</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('create-chat-btn').addEventListener('click', function() {
+      document.getElementById('create-chat-form').style.display = 'block';
+    });
+  </script>
+
+{% endblock %}

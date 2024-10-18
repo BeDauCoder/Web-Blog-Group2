@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-@4=ry@2mwp=wqu__vxnddbee%3+)mw!5u2z_qoaznr4k%76zww
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['yourdomain.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -38,10 +38,20 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     "web",
     "bootstrap_datepicker_plus",
     "django_summernote",
+    "crispy_forms",
+    "crispy_bootstrap5",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    # "allauth.socialaccount.providers.github",
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = ['bootstrap5']
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -52,6 +62,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "web.middleware.UploadFileSizeLimit",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "web_blog_project.urls"
@@ -125,6 +136,27 @@ STATICFILES_DIRS = [
     STATIC_DIR,
 ]
 
+
+# settings.py
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # Để sử dụng đăng nhập mặc định
+    'allauth.account.auth_backends.AuthenticationBackend',  # Để sử dụng allauth
+)
+
+# Đảm bảo rằng bạn sử dụng email thay vì username
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # hoặc 'optional' tùy thuộc vào yêu cầu của bạn
+
+# Đường dẫn redirect sau khi đăng nhập hoặc đăng ký thành công
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -147,5 +179,16 @@ SUMMERNOTE_CONFIG = {
 }
 
 
+SITE_ID = 1
 LOGIN_URL = '/login/'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# settings.py
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'  # Hoặc dịch vụ SMTP khác
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'youremail@gmail.com'
+# EMAIL_HOST_PASSWORD = 'yourpassword'
+
+DEFAULT_FROM_EMAIL = 'noreply@example.com'
