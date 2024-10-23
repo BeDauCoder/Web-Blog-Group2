@@ -1,55 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
-<<<<<<< HEAD
-from django.contrib.auth.models import User
-from django.contrib import messages
-<<<<<<< HEAD
-from .models import Item,Comment,Category
-from .forms import ItemForm, CommentForm,ItemStatusForm,CategoryFilterForm
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-from django.http import HttpResponse
-import requests 
-#######################################################
-"""Author: VanDUng
-# date:14/10/2025 filter by catogrories
-"""
-def get_weather_forecast(city):
-    try:
-        with open("API_KEY", "r") as file:
-            API_KEY = file.read().strip()  # Đọc khóa API và loại bỏ khoảng trắng
-    except Exception as e:
-        print(f"Error reading API key: {e}")
-        return []  # Trả về danh sách rỗng nếu không thể đọc khóa API
-
-    forecast_url = f'https://api.openweathermap.org/data/2.5/forecast?q={city}&appid={API_KEY}&units=metric'
-    
-    try:
-        response = requests.get(forecast_url)
-        response.raise_for_status()  # Kiểm tra mã trạng thái
-        return response.json().get('list', [])  # Dữ liệu dự báo trong key 'list'
-    except requests.exceptions.HTTPError as http_err:
-        print(f"HTTP error occurred: {http_err}")
-    except requests.exceptions.ConnectionError as conn_err:
-        print(f"Connection error occurred: {conn_err}")
-    except requests.exceptions.Timeout as timeout_err:
-        print(f"Timeout error occurred: {timeout_err}")
-    except requests.exceptions.RequestException as req_err:
-        print(f"Request error occurred: {req_err}")
-
-    return []  # Trả về danh sách rỗng nếu có lỗi
-
-
-
-"""date:10/10/2025
-feature: search item by item.Name and itemDescription"""
-=======
-from django.core.paginator import Paginator
-from django.http import HttpResponse,HttpResponseForbidden
->>>>>>> SangNguyen
-=======
 from django.core.paginator import Paginator
 from django.http import HttpResponse,HttpResponseForbidden,JsonResponse
->>>>>>> SangNguyen
 from django.db.models import Q
 from .models import Item, Comment,Category,Message,Chat
 from .forms import ItemForm, CommentForm, ItemStatusForm,ChatForm
@@ -64,6 +15,8 @@ from django.http import Http404
 from django.urls import reverse
 from django.contrib.auth.views import PasswordResetView
 from django.conf import settings
+import requests
+from datetime import datetime
 
 
 
@@ -124,92 +77,80 @@ def user_logout(request):
     return redirect('login')
 
 
+def get_weather_forecast(city):
+    try:
+        with open("API_KEY", "r") as file:
+            API_KEY = file.read().strip()  # Đọc khóa API và loại bỏ khoảng trắng
+    except Exception as e:
+        print(f"Error reading API key: {e}")
+        return []  # Trả về danh sách rỗng nếu không thể đọc khóa API
+
+    forecast_url = f'https://api.openweathermap.org/data/2.5/forecast?q={city}&appid={API_KEY}&units=metric'
+
+    try:
+        response = requests.get(forecast_url)
+        response.raise_for_status()  # Kiểm tra mã trạng thái
+        return response.json().get('list', [])  # Dữ liệu dự báo trong key 'list'
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+    except requests.exceptions.ConnectionError as conn_err:
+        print(f"Connection error occurred: {conn_err}")
+    except requests.exceptions.Timeout as timeout_err:
+        print(f"Timeout error occurred: {timeout_err}")
+    except requests.exceptions.RequestException as req_err:
+        print(f"Request error occurred: {req_err}")
+
+    return []  # Trả về danh sách rỗng nếu có lỗi
+
+
 def item_list(request):
     # Lấy tất cả các danh mục để hiển thị trong danh sách thả xuống
     categories = Category.objects.all()
 
     # Lấy danh mục được chọn từ yêu cầu, nếu có
     selected_category = request.GET.get('category')
-<<<<<<< HEAD
-    
-     # Lọc các item dựa trên danh mục đã chọn (nếu có), nếu không sẽ hiển thị tất cả
-=======
 
     # Lọc các item dựa trên danh mục đã chọn (nếu có), nếu không sẽ hiển thị tất cả
->>>>>>> SangNguyen
     if selected_category:
         items = Item.objects.filter(category_id=selected_category, status='published').order_by('-created_at')  # Hoặc thuộc tính bạn muốn
     else:
-<<<<<<< HEAD
         items = Item.objects.filter(status='published').order_by('-created_at')  # Hoặc thuộc tính bạn muốn
-    
-    hot_items = Item.objects.filter(status='published').order_by('-likes')[:3]
-    
-=======
-        items = Item.objects.filter(status='published')
 
     hot_items = Item.objects.filter(status='published').order_by('-likes')[:3]
 
->>>>>>> SangNguyen
     # Phân trang
     paginator = Paginator(items, 6)  # Hiển thị 6 item mỗi trang
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-<<<<<<< HEAD
-    # Truyền categories vào ngữ cảnh
-    return render(request, 'item_list.html', {
-        'page_obj': page_obj,
-        'hot_items': hot_items,
-        'categories': categories,  # Truyền categories để hiển thị trong mẫu
-    })
-    # Lấy tất cả các danh mục để hiển thị trong danh sách thả xuống
-    categories = Category.objects.all()
-
-    # Lấy danh mục được chọn từ yêu cầu, nếu có
-    selected_category = request.GET.get('category')
-
-    # Lọc các item dựa trên danh mục đã chọn (nếu có), nếu không sẽ hiển thị tất cả
-    if selected_category:
-        items = Item.objects.filter(category_id=selected_category, status='published')
-    else:
-        items = Item.objects.filter(status='published')
-
-    hot_items = Item.objects.filter(status='published').order_by('-likes')[:3]
-
-    ###
-    items = Item.objects.filter(status='published')
-    hot_items = Item.objects.filter(status='published').order_by('-likes')[:3]
-    paginator = Paginator(items, 6)  # Hiển thị 10 item mỗi trang
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'item_list.html', {'page_obj': page_obj, 'items': items, 'hot_items': hot_items})
-=======
     ## Danh sách các thành phố cho dự báo thời tiết
-    cities = ["Hanoi", "Ho Chi Minh City", "Da Nang","Nha Trang","BangKok","Singapore","Jakara","Phuket","Phu Ly"]
+    cities = ["Hanoi", "Ho Chi Minh City", "Da Nang", "Nha Trang", "BangKok", "Singapore", "Jakara", "Phuket", "Phu Ly"]
     weather_forecasts = []
->>>>>>> VanDung
 
     # Lấy một dự báo duy nhất cho từng thành phố
     for city in cities:
         forecasts = get_weather_forecast(city)  # Hàm này trả về một danh sách dự báo cho thành phố
         if forecasts:
             # Chọn dự báo đầu tiên (hoặc một dự báo cụ thể)
+            forecast = forecasts[0]  # Lấy dự báo đầu tiên
+            forecast['dt_txt'] = datetime.strptime(forecast['dt_txt'], "%Y-%m-%d %H:%M:%S")
+
+            # Thêm vào danh sách các dự báo cho từng thành phố
             weather_forecasts.append({
                 'city': city,
-                'forecast': forecasts[0]  # Lấy dự báo đầu tiên
+                'forecast': forecast  # Sử dụng dự báo đầu tiên
             })
-
 
     # Chuẩn bị dữ liệu ngữ cảnh cho mẫu
     context = {
         'page_obj': page_obj,
         'hot_items': hot_items,
         'categories': categories,
-        'weather_forecasts': weather_forecasts,  # Đây là một danh sách phẳng chứa tất cả các dự báo
+        'weather_forecasts': weather_forecasts,  # Đây là một danh sách chứa các dự báo cho mỗi thành phố
     }
 
     return render(request, 'item_list.html', context)
+
 
 
 
@@ -222,8 +163,8 @@ def add_item(request):
             item.status = 'Draft'
             item.created_by = request.user
 
-            if 'image' in request.FILES:
-                image = Image.open(request.FILES['image'])
+            if 'images' in request.FILES:
+                image = Image.open(request.FILES['images'])
                 # Resize the image to a fixed size (e.g., 800x800 pixels)
                 image = image.resize((800, 800), Image.ANTIALIAS)
                 # Save the resized image to the same file

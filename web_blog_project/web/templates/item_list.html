@@ -1,161 +1,141 @@
 {% extends "base.html" %}
 {% load static %}
-<<<<<<< HEAD
-
-{% block content %}
-=======
->>>>>>> SangNguyen
 <html>
 <head>
     <title>Item List</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/item_list.css' %}">
-<<<<<<< HEAD
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          crossorigin="anonymous">
 </head>
-
-
-
+{% block content %}
 <style>
     @media (max-width: 767px) {
         .carousel-inner .carousel-item>div {
             display: none;
         }
-    
+
         .carousel-inner .carousel-item>div:first-child {
             display: block;
         }
     }
-    
+
     .carousel-inner .carousel-item.active,
     .carousel-inner .carousel-item-next,
     .carousel-inner .carousel-item-prev {
         display: flex;
     }
-    
+
     @media (min-width: 768px) {
+
         .carousel-inner .carousel-item-end.active,
         .carousel-inner .carousel-item-next {
             transform: translateX(25%);
         }
-    
+
         .carousel-inner .carousel-item-start.active,
         .carousel-inner .carousel-item-prev {
             transform: translateX(-25%);
         }
     }
-    
+
     .carousel-inner .carousel-item-end,
     .carousel-inner .carousel-item-start {
         transform: translateX(0);
     }
-
 </style>
-
-<body> 
-
-    
-    <!-- <div class="text-center my-5 py-5">
-        <h2 class="font-weight-light">Carousel Bootstrap Nhiều Item</h2>
-        <div class="row mx-auto my-auto justify-content-start bg-secondary mb-3">
-            
-            <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner" role="listbox">
-                    <div class="carousel-item active">
-                        <div class="col-md-3">
-                            <div class="card">
-                                <div class="card-img">
-                                    <img src="{% static 'images/doraemon2.jpg' %}" class="img-fluid">
-                                </div>
-                                <div class="card-img-overlay">Slide 1</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="col-md-3">
-                            <div class="card">
-                                <div class="card-img">
-                                    <img src="{% static 'images/5cmpersecond2.jpg' %}" class="img-fluid">
-                                </div>
-                                <div class="card-img-overlay">Slide 2</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="col-md-3">
-                            <div class="card">
-                                <div class="card-img">
-                                    <img src="{% static 'images/conan2.jpg' %}" class="img-fluid">
-                                </div>
-                                <div class="card-img-overlay">Slide 3</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="col-md-3">
-                            <div class="card">
-                                <div class="card-img">
-                                    <img src="{% static 'images/bphoto1.jpg' %}" class="img-fluid">
-                                </div>
-                                <div class="card-img-overlay">Slide 4</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="col-md-3">
-                            <div class="card">
-                                <div class="card-img">
-                                    <img src="{% static 'images/bphoto2.jpg' %}" class="img-fluid">
-                                </div>
-                                <div class="card-img-overlay">Slide 5</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="col-md-3">
-                            <div class="card">
-                                <div class="card-img">
-                                    <img src="{% static 'images/bphoto3.jpg' %}" class="img-fluid">
-                                </div>
-                                <div class="card-img-overlay">Slide 6</div>
-=======
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-</head>
 <body>
-{% block content %}
-<!-- Filter Form -->
-<div class="col-md-3">
-    <div class="card mb-4">
-        <div class="card-header">
-            Filter by Category
-        </div>
-        <div class="card-body">
-            <form method="GET" action="">
-                <select name="category" class="form-select">
-                    <option value="">All Categories</option>
-                    {% for category in categories %}
-                        <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
-                            {{ category.name }}
-                        </option>
+
+<div class="text-center m">
+        <h2 class="font-weight-light">weather anywhere</h2>
+        <div class="row mx-auto my-auto justify-content-start bg-secondary mb-3">
+
+            <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="1900">
+                <div class="carousel-inner" role="listbox">
+                    {% for item in weather_forecasts %}
+
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="col-md-3 py-5 px-2">
+                            <div class="card border border-5 border-warning rounded-4" style="height: 220px; width: 300px; background: lightblue;">
+                                <div class="card-img pt-5">
+                                    <img src="https://openweathermap.org/img/wn/{{ item.forecast.weather.0.icon }}@2x.png"
+                                         class="img-fluid" alt="Weather Icon">
+                                </div>
+                                <div class="card-img-overlay">
+                                    <!-- <h4>{{ item.forecast.dt_txt }} <br>({{ item.city }})</h4> -->
+                                    <h4>{{ item.forecast.dt_txt|date:"Y-m-d hA" }} <br>({{ item.city }})</h4>
+
+                                    <p class="pt-5"><span>Nhiệt độ: </span><mark>{{ item.forecast.main.temp }}°C</mark></p>
+                                    <p class="position-absolute" style="margin-top: 15px; left: 20px; color: darkblue;">Thời tiết: {{ item.forecast.weather.0.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                     {% endfor %}
-                </select>
-                <button type="submit" class="btn btn-primary mt-3">Filter</button>
-            </form>
+                </div>
+                <a class="carousel-control-prev bg-transparent w-aut" href="#imageCarousel" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </a>
+                <a class="carousel-control-next bg-transparent w-aut" href="#imageCarousel" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+<div class="container">
+    <div class="row">
+        <!-- Filter by Category -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Filter by Category
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="">
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %} selected {% endif %}>
+                            {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-primary mt-3">Filter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Most Hot Section -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Most Hot
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for hot_item in hot_items %}
+                    <li class="list-group-item">
+                        <a href="{% url 'item_detail' hot_item.pk %}">{{ hot_item.name }}</a>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">No hot items available.</li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 
+
 <div class="container mt-5">
     <div class="row">
         <!-- Item List -->
-        <div class="col-md-9">
+        <div class="col-md-12">
             <div class="row">
                 {% for item in page_obj %}
                 <div class="col-md-4">
                     <div class="card mb-4">
-                        <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
+                        <img style="height: 400px" src="{{ item.image.url }}" class="card-img-top"
+                             alt="{{ item.name }}">
                         <div class="card-body">
                             <a href="{% url 'item_detail' item.pk %}" style="height: 120px">
                                 <h5 class="card-title">{{ item.name|truncatechars:100 }}</h5>
@@ -171,46 +151,14 @@
                                 <a href="{% url 'edit_item' item.pk %}" class="btn btn-secondary">Edit</a>
                                 <a href="{% url 'delete_item' item.pk %}" class="btn btn-danger">Delete</a>
                                 <a href="{% url 'add_comment' item.pk %}" class="btn btn-info">Comment</a>
->>>>>>> SangNguyen
                             </div>
                         </div>
                     </div>
                 </div>
-                <a class="carousel-control-prev bg-transparent w-aut" href="#imageCarousel" role="button" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                </a>
-                <a class="carousel-control-next bg-transparent w-aut" href="#imageCarousel" role="button" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                </a>
+                {% empty %}
+                <p>No items available.</p>
+                {% endfor %}
             </div>
-<<<<<<< HEAD
-        </div>
-        <h5 class="mt-2 fw-light">Chuyển động nhiều slide cùng lúc</h5>
-    </div> -->
-    <div class="text-center my-5 py-5">
-        <h2 class="font-weight-light">weather anywhere</h2>
-        <div class="row mx-auto my-auto justify-content-start bg-secondary mb-3">
-            
-            <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="1500">
-                <div class="carousel-inner" role="listbox">
-                    {% for item in weather_forecasts %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <div class="col-md-3 py-5 px-2"> 
-                            <div class="card border border-primary hover-shadow" style="height: 220px; width: 310px; background: lightblue;">
-                                <div class="card-img pt-5">
-                                    <img src="https://openweathermap.org/img/wn/{{ item.forecast.weather.0.icon }}@2x.png"
-                                         class="img-fluid" alt="Weather Icon">
-                                </div>
-                                <div class="card-img-overlay">
-                                    <h4>{{ item.forecast.dt_txt }} <br>({{ item.city }})</h4>
-                                    <p class="pt-5">Nhiệt độ: {{ item.forecast.main.temp }}°C</p>
-                                    <p class="position-absolute" style="margin-top: 15px; left: 20px; color: darkblue;">Thời tiết: {{ item.forecast.weather.0.description }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                    </div>
-=======
             <!-- Pagination -->
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center">
@@ -248,208 +196,26 @@
                 </ul>
             </nav>
         </div>
-        <!-- Most Hot Section -->
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    Most Hot
-                </div>
-                <ul class="list-group list-group-flush">
-                    {% for hot_item in hot_items %}
-                    <li class="list-group-item">
-                        <a href="{% url 'item_detail' hot_item.pk %}">{{ hot_item.name }}</a>
-                    </li>
-                    {% empty %}
-                    <li class="list-group-item">No hot items available.</li>
->>>>>>> SangNguyen
-                    {% endfor %}
-                </div>
-                <a class="carousel-control-prev bg-transparent w-aut" href="#imageCarousel" role="button" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                </a>
-                <a class="carousel-control-next bg-transparent w-aut" href="#imageCarousel" role="button" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                </a>
-            </div>
-        </div>
+
     </div>
-    
-    
-    
-    <div class=" d-flex justify-content-center">
-        <div class="container mt-4">
-            <div class="row">
-                <!-- Weather Slider -->
-                <div class="col-md-9">
-                    {% for city, forecasts in weather_forecasts.items %}
-                    <div id="weatherSlider-{{ forloop.counter }}" class="carousel slide mb-4" data-bs-ride="carousel">
-                        <div class="carousel-inner d-flex">
-                            {% for forecast in forecasts %}
-                            <div class="carousel-item {% if forloop.first %}active{% endif %}" style="min-width: 100%;">
-                                <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
-                                    <div class="text-center mx-2">
-                                        <h5>{{ forecast.dt_txt }} ({{ city }})</h5>
-                                        <p>Nhiệt độ: {{ forecast.main.temp }}°C</p>
-                                        <p>Thời tiết: {{ forecast.weather.0.description }}</p>
-                                        <img src="https://openweathermap.org/img/wn/{{ forecast.weather.0.icon }}@2x.png"
-                                            alt="Weather Icon" style="width: 50px; height: auto;">
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>               
-
-
-                <!-- Filter Form -->
-                <div class="col-md-3 ">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            Lọc theo danh mục
-                        </div>
-                        <div class="card-body">
-                            <form method="GET" action="">
-                                <select name="category" class="form-select">
-                                    <option value="">Tất cả danh mục</option>
-                                    {% for category in categories %}
-                                    <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %} selected {% endif %}>
-                                        {{ category.name }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                                <button type="submit" class="btn btn-primary mt-3">Lọc</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-
-            <div class="container mt-5">
-                <div class="row">
-                    <!-- Item List -->
-                    <div class="col-md-9">
-                        <div class="row">
-                            {% for item in page_obj %}
-                            <div class="col-md-4">
-                                <div class="card mb-4">
-                                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
-                                    <div class="card-body">
-                                        <a href="{% url 'item_detail' item.pk %}">
-                                            <h5 class="card-title">{{ item.name }}</h5>
-                                        </a>
-                                        <p class="card-text">
-                                            <small class="text-muted">Information about: {{ item.information_about
-                                                }}</small>
-                                        </p>
-                                        <p class="card-text">
-                                            <small class="text-muted">Likes: {{ item.total_likes }}</small>
-                                        </p>
-                                        <div class="d-flex justify-content-between">
-                                            <a href="{% url 'like_item' item.pk %}" class="btn btn-primary">Like</a>
-                                            <a href="{% url 'edit_item' item.pk %}" class="btn btn-secondary">Edit</a>
-                                            <a href="{% url 'delete_item' item.pk %}" class="btn btn-danger">Delete</a>
-                                            <a href="{% url 'add_comment' item.pk %}" class="btn btn-info">Comment</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% empty %}
-                            <p>No items available.</p>
-                            {% endfor %}
-                        </div>
-
-                        <!-- Pagination -->
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center">
-                                {% if page_obj.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=1" aria-label="First">
-                                        <span aria-hidden="true">&laquo;&laquo;</span>
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
-                                        aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-                                {% endif %}
-
-                                {% for num in page_obj.paginator.page_range %}
-                                {% if page_obj.number == num %}
-                                <li class="page-item active"><a class="page-link">{{ num }}</a></li>
-                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li
-                                    class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-                                    {% endif %}
-                                    {% endfor %}
-
-                                    {% if page_obj.has_next %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}"
-                                            aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"
-                                            aria-label="Last">
-                                            <span aria-hidden="true">&raquo;&raquo;</span>
-                                        </a>
-                                    </li>
-                                    {% endif %}
-                            </ul>
-                        </nav>
-                    </div>
-
-                    <!-- Most Hot Section -->
-                    <div class="col-md-3">
-                        <div class="card">
-                            <div class="card-header">
-                                Most Hot
-                            </div>
-                            <ul class="list-group list-group-flush">
-                                {% for hot_item in hot_items %}
-                                <li class="list-group-item">
-                                    <a href="{% url 'item_detail' hot_item.pk %}">{{ hot_item.name }}</a>
-                                </li>
-                                {% empty %}
-                                <li class="list-group-item">No hot items available.</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-            
-        </body>
-        
-        </html>
-        <script>
-            let imageCarouselItems = document.querySelectorAll('#imageCarousel .carousel-item');
-            imageCarouselItems.forEach((el) => {
-                const minPerSlide = 6;
-                let next = el.nextElementSibling;
-                for (var i = 1; i < minPerSlide; i++) {
-                    if (!next) {
-                        next = imageCarouselItems[0];
-                    }
-                    let cloneChild = next.cloneNode(true);
-                    el.appendChild(cloneChild.children[0]);
-                    next = next.nextElementSibling;
-                }
-            });
-        </script>
-        
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+<script>
+    let imageCarouselItems = document.querySelectorAll('#imageCarousel .carousel-item');
+    imageCarouselItems.forEach((el) => {
+        const minPerSlide = 6;
+        let next = el.nextElementSibling;
+        for (var i = 1; i < minPerSlide; i++) {
+            if (!next) {
+                next = imageCarouselItems[0];
+            }
+            let cloneChild = next.cloneNode(true);
+            el.appendChild(cloneChild.children[0]);
+            next = next.nextElementSibling;
+        }
+    });
+</script>
 {% endblock %}
-<<<<<<< HEAD
-=======
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 </html>
->>>>>>> SangNguyen
