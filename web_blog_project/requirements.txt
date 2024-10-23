@@ -2,6 +2,7 @@
 # $ conda create --name <env> --file <this file>
 # platform: win-64
 aiosignal==1.3.1=pypi_0
+<<<<<<< HEAD
 aiosqlite==0.20.0=pypi_0
 alabaster==1.0.0=pypi_0
 anaconda-client=1.2.2=pypi_0
