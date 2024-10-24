@@ -12,6 +12,9 @@ pip install django-allauth
 pip install django-summernote
 pip install django-admin-menu
 pip install openai==0.28.0
+pip install django-crispy-forms
+pip install pillow
+pip install django-request
 
 Account: SuperUser
 BeDauCoder
