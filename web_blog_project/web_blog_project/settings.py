@@ -24,9 +24,9 @@ STATIC_DIR = os.path.join(BASE_DIR,'static')
 SECRET_KEY = "django-insecure-@4=ry@2mwp=wqu__vxnddbee%3+)mw!5u2z_qoaznr4k%76zww"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['yourdomain.com', 'localhost', '127.0.0.1']
+
 
 
 # Application definition
@@ -135,7 +135,7 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     STATIC_DIR,
 ]
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # settings.py
 
@@ -178,6 +178,7 @@ SUMMERNOTE_CONFIG = {
     'attachment_filesize_limit': 10485760,  # 10 * 1024 * 1024 bytes
 }
 
+ALLOWED_HOSTS = ['bedaucoder.pythonanywhere.com']
 
 SITE_ID = 1
 LOGIN_URL = '/login/'
